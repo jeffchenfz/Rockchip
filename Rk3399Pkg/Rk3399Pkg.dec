@@ -1,0 +1,42 @@
+#
+#  Copyright (c) 2014-2017, Linaro Limited. All rights reserved.
+#  Copyright (c) 2017, Rockchip Inc. All rights reserved.
+#
+#  This program and the accompanying materials
+#  are licensed and made available under the terms and conditions of the BSD License
+#  which accompanies this distribution.  The full text of the license may be found at
+#  http://opensource.org/licenses/bsd-license.php
+#
+#  THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+#
+
+[Defines]
+  DEC_SPECIFICATION              = 0x00010019
+  PACKAGE_NAME                   = Rk3399Pkg
+  PACKAGE_GUID                   = a42ece54-d895-4fca-a592-1dd4f0f9e63d
+  PACKAGE_VERSION                = 0.1
+
+################################################################################
+#
+# Include Section - list of Include Paths that are provided by this package.
+#                   Comments are used for Keywords and Module Types.
+#
+# Supported Module Types:
+#  BASE SEC PEI_CORE PEIM DXE_CORE DXE_DRIVER DXE_RUNTIME_DRIVER DXE_SMM_DRIVER DXE_SAL_DRIVER UEFI_DRIVER UEFI_APPLICATION
+#
+################################################################################
+[Includes.common]
+  Include                        # Root include for the package
+
+[Guids.common]
+  gRk3399PkgTokenSpaceGuid   = { 0xa0a4631b, 0xaba4, 0x4e73, { 0x90, 0x48, 0xae, 0x63, 0x84, 0xd6, 0x51, 0xd4 } }
+
+[PcdsFixedAtBuild.common]
+  # RK3399 UART
+  gRk3399PkgTokenSpaceGuid.UartClkInHz|24000000|UINT32|0x0000001F
+  gRk3399PkgTokenSpaceGuid.UartInteger|0|UINT32|0x00000020
+  gRk3399PkgTokenSpaceGuid.UartFractional|0|UINT32|0x0000002D
+  
+  # RK3399 Registers Base Address
+  gRk3399PkgTokenSpaceGuid.PcdGrfRegisterBase|0xFF770000|UINT32|0x00000081
