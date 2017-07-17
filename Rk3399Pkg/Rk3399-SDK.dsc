@@ -311,8 +311,8 @@
   #
   # ARM General Interrupt Controller
   #
-  gArmTokenSpaceGuid.PcdGicDistributorBase|0xF6801000
-  gArmTokenSpaceGuid.PcdGicInterruptInterfaceBase|0xF6802000
+  gArmTokenSpaceGuid.PcdGicDistributorBase|0xFEE00000
+  gArmTokenSpaceGuid.PcdGicRedistributorsBase|0xFEF00000
 
   gEfiMdePkgTokenSpaceGuid.PcdPlatformBootTimeOut|10
 
@@ -377,7 +377,7 @@
   MdeModulePkg/Universal/FaultTolerantWriteDxe/FaultTolerantWriteDxe.inf
   MdeModulePkg/Universal/Variable/EmuRuntimeDxe/EmuVariableRuntimeDxe.inf
 
-  #ArmPkg/Drivers/ArmGic/ArmGicDxe.inf
+  ArmPkg/Drivers/ArmGic/ArmGicDxe.inf
   ArmPkg/Drivers/TimerDxe/TimerDxe.inf
 
   MdeModulePkg/Universal/WatchdogTimerDxe/WatchdogTimer.inf
