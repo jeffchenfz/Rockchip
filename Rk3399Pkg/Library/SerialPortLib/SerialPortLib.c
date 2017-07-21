@@ -22,7 +22,7 @@
 #include <Library/PcdLib.h>
 #include <Library/SerialPortLib.h>
 
-#include <Drivers/Uart.h>
+#include <Library/UartLib.h>
 
 /** Initialise the serial device hardware with default settings.
 

@@ -17,14 +17,14 @@
 
 [Defines]
   INF_VERSION                    = 0x00010005
-  BASE_NAME                      = Uart
+  BASE_NAME                      = UartLib
   FILE_GUID                      = 16877e05-d103-4b5f-9f0c-c7880cdd158a
   MODULE_TYPE                    = BASE
   VERSION_STRING                 = 1.0
-  LIBRARY_CLASS                  = Uart
+  LIBRARY_CLASS                  = UartLib
 
 [Sources.common]
-  Uart.c
+  UartLib.c
 
 [LibraryClasses]
   DebugLib

@@ -85,7 +85,7 @@
   UefiDriverEntryPoint|MdePkg/Library/UefiDriverEntryPoint/UefiDriverEntryPoint.inf
   UefiApplicationEntryPoint|MdePkg/Library/UefiApplicationEntryPoint/UefiApplicationEntryPoint.inf
 
-  UartLib|OpenPlatformPkg/Platforms/Rockchip/Rk3399Pkg/Drivers/Uart/Uart.inf
+  UartLib|OpenPlatformPkg/Platforms/Rockchip/Rk3399Pkg/Library/SerialPortLib/UartLib.inf
   SerialPortLib|OpenPlatformPkg/Platforms/Rockchip/Rk3399Pkg/Library/SerialPortLib/SerialPortLib.inf
   RealTimeClockLib|OpenPlatformPkg/Platforms/Rockchip/Rk3399Pkg/Library/Rk808RealTimeClockLib/Rk808RealTimeClockLib.inf
   

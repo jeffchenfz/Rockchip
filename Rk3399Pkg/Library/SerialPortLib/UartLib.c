@@ -19,7 +19,7 @@
 #include <Library/IoLib.h>
 #include <Library/PcdLib.h>
 
-#include <Drivers/Uart.h>
+#include <Library/UartLib.h>
 #include <Rk3399/Rk3399Grf.h>
 
 /* uart some key registers offset */
