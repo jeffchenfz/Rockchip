@@ -87,7 +87,7 @@
 
   UartLib|OpenPlatformPkg/Platforms/Rockchip/Rk3399Pkg/Drivers/Uart/Uart.inf
   SerialPortLib|OpenPlatformPkg/Platforms/Rockchip/Rk3399Pkg/Library/SerialPortLib/SerialPortLib.inf
-  #RealTimeClockLib|ArmPlatformPkg/Library/PL031RealTimeClockLib/PL031RealTimeClockLib.inf
+  RealTimeClockLib|OpenPlatformPkg/Platforms/Rockchip/Rk3399Pkg/Library/Rk808RealTimeClockLib/Rk808RealTimeClockLib.inf
   
   NetLib|MdeModulePkg/Library/DxeNetLib/DxeNetLib.inf
 
@@ -128,6 +128,10 @@
   NULL|MdePkg/Library/BaseStackCheckLib/BaseStackCheckLib.inf
 
   TimeBaseLib|EmbeddedPkg/Library/TimeBaseLib/TimeBaseLib.inf
+
+  # Add I2CLib
+  I2CLib|OpenPlatformPkg/Platforms/Rockchip/Rk3399Pkg/Library/I2CLib/I2CLib.inf
+
 [LibraryClasses.common.SEC]
   PrePiLib|EmbeddedPkg/Library/PrePiLib/PrePiLib.inf
   ExtractGuidedSectionLib|EmbeddedPkg/Library/PrePiExtractGuidedSectionLib/PrePiExtractGuidedSectionLib.inf
@@ -366,7 +370,7 @@
   MdeModulePkg/Universal/CapsuleRuntimeDxe/CapsuleRuntimeDxe.inf
   EmbeddedPkg/EmbeddedMonotonicCounter/EmbeddedMonotonicCounter.inf
   EmbeddedPkg/ResetRuntimeDxe/ResetRuntimeDxe.inf
-  #EmbeddedPkg/RealTimeClockRuntimeDxe/RealTimeClockRuntimeDxe.inf
+  EmbeddedPkg/RealTimeClockRuntimeDxe/RealTimeClockRuntimeDxe.inf
   EmbeddedPkg/MetronomeDxe/MetronomeDxe.inf
 
   MdeModulePkg/Universal/Console/ConPlatformDxe/ConPlatformDxe.inf

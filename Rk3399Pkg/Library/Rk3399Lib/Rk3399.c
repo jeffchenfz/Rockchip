@@ -20,7 +20,7 @@
 
 #include <Ppi/ArmMpCoreInfo.h>
 
-#include <Rk3399.h>
+#include <Rk3399/Rk3399.h>
 
 ARM_CORE_INFO mRk3399InfoTable[] = {
   {

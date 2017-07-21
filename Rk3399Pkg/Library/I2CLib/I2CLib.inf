@@ -1,0 +1,44 @@
+#/** @file
+#
+#    Copyright (c) 2017, Fuzhou Rockchip Electronics Co., Ltd.
+#
+#    This program and the accompanying materials
+#    are licensed and made available under the terms and conditions of the BSD License
+#    which accompanies this distribution. The full text of the license may be found at
+#    http://opensource.org/licenses/bsd-license.php
+#
+#    THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
+#    WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+#
+#**/
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = I2CLib
+  FILE_GUID                      = a7fefb8f-fa41-4a87-919f-e709b6585672
+  MODULE_TYPE                    = BASE
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = I2CLib
+
+[Sources.common]
+  I2CLib.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  EmbeddedPkg/EmbeddedPkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  ArmPkg/ArmPkg.dec
+  ArmPlatformPkg/ArmPlatformPkg.dec
+  OpenPlatformPkg/Platforms/Rockchip/Rk3399Pkg/Rk3399Pkg.dec
+
+[LibraryClasses]
+  DebugLib
+  IoLib
+  BaseLib
+  ArmLib
+  TimerLib
+
+[BuildOptions]
+
+[Pcd]
+

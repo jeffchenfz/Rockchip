@@ -1,6 +1,6 @@
 /** @file
 *
-*  Copyright (c) 2017, Rockchip Inc. All rights reserved.
+*  Copyright (c) 2017, Fuzhou Rockchip Electronics Co., Ltd
 *  
 *  This program and the accompanying materials                          
 *  are licensed and made available under the terms and conditions of the BSD License         
@@ -12,8 +12,8 @@
 *
 **/
 
-#ifndef __GRF_H__
-#define __GRF_H__
+#ifndef __RK3399_GRF_H__
+#define __RK3399_GRF_H__
 
 /* gpio iomux control */
 #define GRF_GPIO2A_IOMUX        0xe000
@@ -121,4 +121,4 @@
 #define GRF_SIG_DETECT_CLR	0xe3d0
 #define GRF_SIG_DETECT_STATUS	0xe3e0
 
-#endif  //__GRF_H__
+#endif  //__RK3399_GRF_H__

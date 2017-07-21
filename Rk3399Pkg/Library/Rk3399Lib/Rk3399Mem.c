@@ -20,7 +20,7 @@
 #include <Library/MemoryAllocationLib.h>
 #include <Library/PcdLib.h>
 
-#include <Rk3399.h>
+#include <Rk3399/Rk3399.h>
 
 // The total number of descriptors, including the final "end-of-table" descriptor.
 #define MAX_VIRTUAL_MEMORY_MAP_DESCRIPTORS 12
