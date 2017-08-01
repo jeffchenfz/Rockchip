@@ -124,8 +124,8 @@ READ_LOCK_STATUS   = TRUE
   #
   # Multimedia Card Interface
   #
-  #INF EmbeddedPkg/Universal/MmcDxe/MmcDxe.inf
-  #INF OpenPlatformPkg/Drivers/Mmc/DwEmmcDxe/DwEmmcDxe.inf
+  INF EmbeddedPkg/Universal/MmcDxe/MmcDxe.inf
+  INF OpenPlatformPkg/Platforms/Rockchip/Rk3399Pkg/Drivers/DwEmmcDxe/DwEmmcDxe.inf
 
   #
   # USB Host Support

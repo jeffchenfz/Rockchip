@@ -247,7 +247,7 @@
   #  DEBUG_GCD       0x00100000  // Global Coherency Database changes
   #  DEBUG_CACHE     0x00200000  // Memory range cachability changes
   #  DEBUG_ERROR     0x80000000  // Error
-  gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x8000000F
+  gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x8000104F
 
   gEfiMdePkgTokenSpaceGuid.PcdReportStatusCodePropertyMask|0x07
 
@@ -330,8 +330,8 @@
   #
   # DW MMC/SD card controller
   #
-  #gDwEmmcDxeTokenSpaceGuid.PcdDwEmmcDxeBaseAddress|0xF723D000
-  #gDwEmmcDxeTokenSpaceGuid.PcdDwEmmcDxeClockFrequencyInHz|100000000
+  gDwEmmcDxeTokenSpaceGuid.PcdDwEmmcDxeBaseAddress|0xFE320000
+  gDwEmmcDxeTokenSpaceGuid.PcdDwEmmcDxeClockFrequencyInHz|100000000
 
   #
   #
@@ -396,8 +396,8 @@
   #
   # MMC/SD
   #
-  #EmbeddedPkg/Universal/MmcDxe/MmcDxe.inf
-  #OpenPlatformPkg/Drivers/Mmc/DwEmmcDxe/DwEmmcDxe.inf
+  EmbeddedPkg/Universal/MmcDxe/MmcDxe.inf
+  OpenPlatformPkg/Platforms/Rockchip/Rk3399Pkg/Drivers/DwEmmcDxe/DwEmmcDxe.inf
 
   #
   # USB Host Support

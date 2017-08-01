@@ -28,6 +28,7 @@
 #define RK3399_PMU_GRF_BASE               0xFF320000
 #define RK3399_PMU_CRU_BASE               0xFF750000
 #define RK3399_CRU_BASE                   0xFF760000
+#define RK3399_GRF_BASE                   0xFF770000
 
 #define RK3399_I2C0_BASE                  0xFF3C0000
 #define RK3399_I2C1_BASE                  0xFF110000
@@ -39,10 +40,16 @@
 #define RK3399_I2C7_BASE                  0xFF160000
 #define RK3399_I2C8_BASE                  0xFF3E0000
 
+#define CruReadl(offset)		MmioRead32(RK3399_CRU_BASE + offset)
+#define CruWritel(v, offset)		do { MmioWrite32(RK3399_CRU_BASE + offset, v); } while (0)
+
+#define GrfReadl(offset)		MmioRead32(RK3399_GRF_BASE + offset)
+#define GrfWritel(v, offset)		do { MmioWrite32(RK3399_GRF_BASE + offset, v); } while (0)
+
 #define PmuCruReadl(offset)		MmioRead32(RK3399_PMU_CRU_BASE + offset)
 #define PmuCruWritel(v, offset)		do { MmioWrite32(RK3399_PMU_CRU_BASE + offset, v); } while (0)
 
-#define CruReadl(offset)		MmioRead32(RK3399_CRU_BASE + offset)
-#define CruWritel(v, offset)		do { MmioWrite32(RK3399_CRU_BASE + offset, v); } while (0)
+#define PmuGrfReadl(offset)		MmioRead32(RK3399_PMU_GRF_BASE + offset)
+#define PmuGrfWritel(v, offset)		do { MmioWrite32(RK3399_PMU_GRF_BASE + offset, v); } while (0)
 
 #endif /* __RK3399_H__ */
