@@ -289,6 +289,8 @@ SendCommand (
 
   DEBUG ((DW_DBG, "%a(): MmcCmd 0x%x(%d),Argument 0x%x \n", __func__, MmcCmd, MmcCmd&0x3f, Argument));
 
+  MicroSecondDelay(15000);
+
   // Wait until MMC is idle
   do {
     Data = MmioRead32 (DWEMMC_STATUS);
@@ -302,7 +304,7 @@ SendCommand (
             DWEMMC_INT_RCRC | DWEMMC_INT_RE;
   ErrMask |= DWEMMC_INT_DCRC | DWEMMC_INT_DRT | DWEMMC_INT_SBE;
   do {
-    MicroSecondDelay(15000);
+    MicroSecondDelay(500);
     Data = MmioRead32 (DWEMMC_RINTSTS);
 
     if (Data & ErrMask) {
@@ -345,6 +347,14 @@ DwEmmcSendCommand (
   case MMC_INDX(3):
     Cmd = BIT_CMD_RESPONSE_EXPECT | BIT_CMD_CHECK_RESPONSE_CRC |
            BIT_CMD_SEND_INIT;
+    break;
+  case MMC_INDX(6):
+    if (((Argument >> 31) & 0x1) == 0x1)
+      Cmd = BIT_CMD_RESPONSE_EXPECT |BIT_CMD_CHECK_RESPONSE_CRC |
+           BIT_CMD_DATA_EXPECTED | BIT_CMD_READ |
+           BIT_CMD_WAIT_PRVDATA_COMPLETE;
+    else
+      Cmd = BIT_CMD_RESPONSE_EXPECT | BIT_CMD_CHECK_RESPONSE_CRC;
     break;
   case MMC_INDX(7):
     if (Argument)
@@ -406,14 +416,8 @@ DwEmmcSendCommand (
   if (IsPendingReadCommand (Cmd) || IsPendingWriteCommand (Cmd)) {
     mDwEmmcCommand = Cmd;
     mDwEmmcArgument = Argument;
-    if (((Cmd&0x3f) == 51) || ((Cmd&0x3f) == 6))
-      Status = SendCommand (Cmd, Argument);
   } else {
     Status = SendCommand (Cmd, Argument);
-    if ((Cmd&0x3f) == 6) {
-	mDwEmmcCommand = Cmd;
-	mDwEmmcArgument = Argument;
-    }
   }
   return Status;
 }
@@ -529,21 +533,19 @@ DwEmmcReadBlockData (
     } while (Data & DWEMMC_STS_DATA_BUSY);
   }
 
-  if (!(((mDwEmmcCommand&0x3f) == 6) || ((mDwEmmcCommand&0x3f) == 51))) {
-    if ((mDwEmmcCommand & BIT_CMD_STOP_ABORT_CMD) || (mDwEmmcCommand & BIT_CMD_DATA_EXPECTED)) {
-      if (!(MmioRead32 (DWEMMC_STATUS) & FIFO_EMPTY)) {
-        Data = MmioRead32 (DWEMMC_CTRL);
-        Data |= FIFO_RESET;
-        MmioWrite32 (DWEMMC_CTRL, Data);
+  if ((mDwEmmcCommand & BIT_CMD_STOP_ABORT_CMD) || (mDwEmmcCommand & BIT_CMD_DATA_EXPECTED)) {
+    if (!(MmioRead32 (DWEMMC_STATUS) & FIFO_EMPTY)) {
+      Data = MmioRead32 (DWEMMC_CTRL);
+      Data |= FIFO_RESET;
+      MmioWrite32 (DWEMMC_CTRL, Data);
 
-        TimeOut = 100000;
-        while (((value = MmioRead32 (DWEMMC_CTRL)) & (FIFO_RESET)) && (TimeOut > 0)) {
-          TimeOut--;
-        }
-        if (TimeOut == 0) {
-          DEBUG ((DEBUG_ERROR, "%a():  CMD=%d SDC_SDC_ERROR\n", __func__, mDwEmmcCommand&0x3f));
-          return EFI_DEVICE_ERROR;
-        }
+      TimeOut = 100000;
+      while (((value = MmioRead32 (DWEMMC_CTRL)) & (FIFO_RESET)) && (TimeOut > 0)) {
+        TimeOut--;
+      }
+      if (TimeOut == 0) {
+        DEBUG ((DEBUG_ERROR, "%a():  CMD=%d SDC_SDC_ERROR\n", __func__, mDwEmmcCommand&0x3f));
+        return EFI_DEVICE_ERROR;
       }
     }
   }
@@ -551,19 +553,18 @@ DwEmmcReadBlockData (
   MmioWrite32 (DWEMMC_BLKSIZ, 512);
   MmioWrite32 (DWEMMC_BYTCNT, Length);
 
-  if (!(((mDwEmmcCommand&0x3f) == 6) || ((mDwEmmcCommand&0x3f) == 51))) {
-    Status = SendCommand (mDwEmmcCommand, mDwEmmcArgument);
-    if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "Failed to read data, mDwEmmcCommand:%x, mDwEmmcArgument:%x, Status:%r\n", mDwEmmcCommand, mDwEmmcArgument, Status));
-      return EFI_DEVICE_ERROR;
-    }
+  Status = SendCommand (mDwEmmcCommand, mDwEmmcArgument);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "Failed to read data, mDwEmmcCommand:%x, mDwEmmcArgument:%x, Status:%r\n", mDwEmmcCommand, mDwEmmcArgument, Status));
+    return EFI_DEVICE_ERROR;
   }
 
   DEBUG((DW_DBG, "Sdmmc::SdmmcReadBlockData  DataLen=%d\n", DataLen));
   TimeOut = 1000000;
   while (DataLen) {
     if (MmioRead32(DWEMMC_RINTSTS) & (DWEMMC_INT_DRT | DWEMMC_INT_SBE | DWEMMC_INT_EBE | DWEMMC_INT_DCRC))  {
-      DEBUG ((DEBUG_ERROR, "%a(): EFI_DEVICE_ERROR\n", __func__));
+      DEBUG ((DEBUG_ERROR, "%a(): EFI_DEVICE_ERROR DWEMMC_RINTSTS=0x%x DataLen=%d\n",
+        __func__, MmioRead32(DWEMMC_RINTSTS), DataLen));
       return EFI_DEVICE_ERROR;
     }
 
@@ -647,12 +648,10 @@ DwEmmcWriteBlockData (
   MmioWrite32 (DWEMMC_BLKSIZ, 512);
   MmioWrite32 (DWEMMC_BYTCNT, Length);
 
-  if (!(((mDwEmmcCommand&0x3f) == 6) || ((mDwEmmcCommand&0x3f) == 51))) {
-    Status = SendCommand (mDwEmmcCommand, mDwEmmcArgument);
-    if (EFI_ERROR (Status)) {
-      DEBUG ((DEBUG_ERROR, "Failed to write data, mDwEmmcCommand:%x, mDwEmmcArgument:%x, Status:%r\n", mDwEmmcCommand, mDwEmmcArgument, Status));
-      return EFI_DEVICE_ERROR;
-    }
+  Status = SendCommand (mDwEmmcCommand, mDwEmmcArgument);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "Failed to write data, mDwEmmcCommand:%x, mDwEmmcArgument:%x, Status:%r\n", mDwEmmcCommand, mDwEmmcArgument, Status));
+    return EFI_DEVICE_ERROR;
   }
 
   for (Count = 0; Count < Size32; Count++) {
@@ -795,6 +794,10 @@ DwEmmcIomux (
   UINT32 PllRate;
 
   DEBUG ((DW_DBG, "%a():\n", __func__));
+
+  CruWritel((0x1 << ( 10 + 16)) | (1 << 10), CRU_SOFTRSTS_CON(7));
+  MicroSecondDelay(5);
+  CruWritel((0x1 << ( 10 + 16)) | (0 << 10), CRU_SOFTRSTS_CON(7));
 
   PllRate = RkClkPllGetRate(GPLL_ID);
   DEBUG ((DW_DBG, "%a(): GPLL PllRate=%d\n", __func__, PllRate));
