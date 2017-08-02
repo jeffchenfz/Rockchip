@@ -247,7 +247,7 @@
   #  DEBUG_GCD       0x00100000  // Global Coherency Database changes
   #  DEBUG_CACHE     0x00200000  // Memory range cachability changes
   #  DEBUG_ERROR     0x80000000  // Error
-  gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x8000104F
+  gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x8000000F
 
   gEfiMdePkgTokenSpaceGuid.PcdReportStatusCodePropertyMask|0x07
 

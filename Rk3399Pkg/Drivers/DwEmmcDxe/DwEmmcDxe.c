@@ -302,11 +302,12 @@ SendCommand (
             DWEMMC_INT_RCRC | DWEMMC_INT_RE;
   ErrMask |= DWEMMC_INT_DCRC | DWEMMC_INT_DRT | DWEMMC_INT_SBE;
   do {
-    MicroSecondDelay(500);
+    MicroSecondDelay(15000);
     Data = MmioRead32 (DWEMMC_RINTSTS);
 
     if (Data & ErrMask) {
-      DEBUG ((DEBUG_ERROR, "%a(): EFI_DEVICE_ERROR\n", __func__));
+      DEBUG ((DW_DBG, "%a(): EFI_DEVICE_ERROR DWEMMC_RINTSTS=0x%x MmcCmd 0x%x(%d),Argument 0x%x\n",
+          __func__, Data, MmcCmd, MmcCmd&0x3f, Argument));
       return EFI_DEVICE_ERROR;
     }
     if (Data & DWEMMC_INT_DTO) {     // Transfer Done
@@ -326,7 +327,6 @@ DwEmmcSendCommand (
   )
 {
   UINT32       Cmd = 0;
-  UINT32       CmdNew = 0;
   EFI_STATUS   Status = EFI_SUCCESS;
 
   DEBUG ((DW_DBG, "%a(): MmcCmd 0x%x(%d),Argument 0x%x \n", __func__, MmcCmd, MmcCmd&0x3f, Argument));
@@ -402,10 +402,6 @@ DwEmmcSendCommand (
   }
 
   Cmd |= MMC_GET_INDX(MmcCmd) | BIT_CMD_USE_HOLD_REG | BIT_CMD_START;
-  CmdNew |= MMC_GET_INDX(MmcCmd) | BIT_CMD_USE_HOLD_REG | BIT_CMD_START;
-
-  DEBUG ((DEBUG_ERROR, "%a(): DwEmmcSendCommand() index[CMD %d] Cmd 0x%x,CmdNew 0x%x\n",
-    __func__, Cmd&0x3f,Cmd, CmdNew));
 
   if (IsPendingReadCommand (Cmd) || IsPendingWriteCommand (Cmd)) {
     mDwEmmcCommand = Cmd;
@@ -533,24 +529,24 @@ DwEmmcReadBlockData (
     } while (Data & DWEMMC_STS_DATA_BUSY);
   }
 
-if (!(((mDwEmmcCommand&0x3f) == 6) || ((mDwEmmcCommand&0x3f) == 51))) {
-  if ((mDwEmmcCommand & BIT_CMD_STOP_ABORT_CMD) || (mDwEmmcCommand & BIT_CMD_DATA_EXPECTED)) {
-    if (!(MmioRead32 (DWEMMC_STATUS) & FIFO_EMPTY)) {
-      Data = MmioRead32 (DWEMMC_CTRL);
-      Data |= FIFO_RESET;
-      MmioWrite32 (DWEMMC_CTRL, Data);
+  if (!(((mDwEmmcCommand&0x3f) == 6) || ((mDwEmmcCommand&0x3f) == 51))) {
+    if ((mDwEmmcCommand & BIT_CMD_STOP_ABORT_CMD) || (mDwEmmcCommand & BIT_CMD_DATA_EXPECTED)) {
+      if (!(MmioRead32 (DWEMMC_STATUS) & FIFO_EMPTY)) {
+        Data = MmioRead32 (DWEMMC_CTRL);
+        Data |= FIFO_RESET;
+        MmioWrite32 (DWEMMC_CTRL, Data);
 
-      TimeOut = 100000;
-      while (((value = MmioRead32 (DWEMMC_CTRL)) & (FIFO_RESET)) && (TimeOut > 0)) {
-        TimeOut--;
-      }
-      if (TimeOut == 0) {
-        DEBUG ((DEBUG_ERROR, "%a():  CMD=%d SDC_SDC_ERROR\n", __func__, mDwEmmcCommand&0x3f));
-        return EFI_DEVICE_ERROR;
+        TimeOut = 100000;
+        while (((value = MmioRead32 (DWEMMC_CTRL)) & (FIFO_RESET)) && (TimeOut > 0)) {
+          TimeOut--;
+        }
+        if (TimeOut == 0) {
+          DEBUG ((DEBUG_ERROR, "%a():  CMD=%d SDC_SDC_ERROR\n", __func__, mDwEmmcCommand&0x3f));
+          return EFI_DEVICE_ERROR;
+        }
       }
     }
   }
-}
 
   MmioWrite32 (DWEMMC_BLKSIZ, 512);
   MmioWrite32 (DWEMMC_BYTCNT, Length);
@@ -596,6 +592,14 @@ if (!(((mDwEmmcCommand&0x3f) == 6) || ((mDwEmmcCommand&0x3f) == 51))) {
   return ret;
 }
 
+#define MMC_GET_FCNT(x)		        (((x)>>17) & 0x1FF)
+#define INTMSK_HTO      (0x1<<10)
+
+/* Common flag combinations */
+#define MMC_DATA_ERROR_FLAGS (DWEMMC_INT_DRT | DWEMMC_INT_DCRC | DWEMMC_INT_FRUN | \
+	DWEMMC_INT_HLE | INTMSK_HTO | DWEMMC_INT_SBE  | \
+	DWEMMC_INT_EBE)
+
 EFI_STATUS
 DwEmmcWriteBlockData (
   IN EFI_MMC_HOST_PROTOCOL     *This,
@@ -604,37 +608,68 @@ DwEmmcWriteBlockData (
   IN UINT32*                    Buffer
   )
 {
-  EFI_STATUS  Status;
-  UINT32      DescPages, CountPerPage, Count;
-  EFI_TPL     Tpl;
+  UINT32 *DataBuffer = Buffer;
+  UINTN Count=0;
+  UINTN Size32 = Length / 4;
+  UINT32 Mask;
+  EFI_STATUS	Status;
+  UINT32		Data;
+  UINT32		TimeOut = 0;
+  UINT32		value = 0;
 
   DEBUG ((DW_DBG, "%a():\n", __func__));
 
-  Tpl = gBS->RaiseTPL (TPL_NOTIFY);
-
-  CountPerPage = EFI_PAGE_SIZE / 16;
-  Count = (Length + DWEMMC_DMA_BUF_SIZE - 1) / DWEMMC_DMA_BUF_SIZE;
-  DescPages = (Count + CountPerPage - 1) / CountPerPage;
-
-  WriteBackDataCacheRange (Buffer, Length);
-
-  Status = PrepareDmaData (gpIdmacDesc, Length, Buffer);
-  if (EFI_ERROR (Status)) {
-    goto out;
+  if (mDwEmmcCommand & BIT_CMD_WAIT_PRVDATA_COMPLETE) {
+    do {
+      Data = MmioRead32 (DWEMMC_STATUS);
+    } while (Data & DWEMMC_STS_DATA_BUSY);
   }
 
-  WriteBackDataCacheRange (gpIdmacDesc, DescPages * EFI_PAGE_SIZE);
-  StartDma (Length);
+  if (!(((mDwEmmcCommand&0x3f) == 6) || ((mDwEmmcCommand&0x3f) == 51))) {
+    if ((mDwEmmcCommand & BIT_CMD_STOP_ABORT_CMD) || (mDwEmmcCommand & BIT_CMD_DATA_EXPECTED)) {
+      if (!(MmioRead32 (DWEMMC_STATUS) & FIFO_EMPTY)) {
+        Data = MmioRead32 (DWEMMC_CTRL);
+        Data |= FIFO_RESET;
+        MmioWrite32 (DWEMMC_CTRL, Data);
 
-  Status = SendCommand (mDwEmmcCommand, mDwEmmcArgument);
-  if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "Failed to write data, mDwEmmcCommand:%x, mDwEmmcArgument:%x, Status:%r\n", mDwEmmcCommand, mDwEmmcArgument, Status));
-    goto out;
+        TimeOut = 100000;
+        while (((value = MmioRead32 (DWEMMC_CTRL)) & (FIFO_RESET)) && (TimeOut > 0)) {
+          TimeOut--;
+        }
+        if (TimeOut == 0) {
+          DEBUG ((DEBUG_ERROR, "%a():  CMD=%d SDC_SDC_ERROR\n", __func__, mDwEmmcCommand&0x3f));
+          return EFI_DEVICE_ERROR;
+        }
+      }
+    }
   }
-out:
-  // Restore Tpl
-  gBS->RestoreTPL (Tpl);
-  return Status;
+
+  MmioWrite32 (DWEMMC_BLKSIZ, 512);
+  MmioWrite32 (DWEMMC_BYTCNT, Length);
+
+  if (!(((mDwEmmcCommand&0x3f) == 6) || ((mDwEmmcCommand&0x3f) == 51))) {
+    Status = SendCommand (mDwEmmcCommand, mDwEmmcArgument);
+    if (EFI_ERROR (Status)) {
+      DEBUG ((DEBUG_ERROR, "Failed to write data, mDwEmmcCommand:%x, mDwEmmcArgument:%x, Status:%r\n", mDwEmmcCommand, mDwEmmcArgument, Status));
+      return EFI_DEVICE_ERROR;
+    }
+  }
+
+  for (Count = 0; Count < Size32; Count++) {
+    while(MMC_GET_FCNT(MmioRead32(DWEMMC_STATUS)) >32)
+    MicroSecondDelay(1);
+    MmioWrite32((DWEMMC_MSHCI_FIFO), *DataBuffer++);
+  }
+
+  do {
+    Mask = MmioRead32(DWEMMC_RINTSTS);
+    if (Mask & (MMC_DATA_ERROR_FLAGS)) {
+      DEBUG((DEBUG_ERROR, "SdmmcWriteData error, RINTSTS = 0x%08x\n", Mask));
+      return EFI_DEVICE_ERROR;
+    }	
+  } while (!(Mask & DWEMMC_INT_DTO));
+
+  return EFI_SUCCESS;
 }
 
 EFI_STATUS
