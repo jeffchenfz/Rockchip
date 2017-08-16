@@ -29,6 +29,16 @@ enum RkI2CBusID {
 	I2C_BUS_MAX
 };
 
+struct RkI2CInfo {
+	UINT32		Regs;
+	UINT32		Speed;
+};
+
+EFI_STATUS
+RkI2cLibRuntimeSetup(enum RkI2CBusID BusId);
+
+void *RkI2CGetBase(enum RkI2CBusID BusId);
+
 EFI_STATUS
 EFIAPI
 I2CInit(  UINT32 BusId, UINT32 Speed);

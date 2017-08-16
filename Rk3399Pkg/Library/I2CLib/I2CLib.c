@@ -26,22 +26,6 @@
 #include <Rk3399/Rk3399Grf.h>
 #include <Rk3399/Rk3399PmuGrf.h>
 
-struct RkI2CInfo {
-	UINT32		Regs;
-	UINT32		Speed;
-};
-
-static struct RkI2CInfo RkI2CDev[I2C_BUS_MAX] = {
-	{ .Regs = (UINT32)RK3399_I2C0_BASE, 0 },
-	{ .Regs = (UINT32)RK3399_I2C1_BASE, 0 },
-	{ .Regs = (UINT32)RK3399_I2C2_BASE, 0 },
-	{ .Regs = (UINT32)RK3399_I2C3_BASE, 0 },
-	{ .Regs = (UINT32)RK3399_I2C4_BASE, 0 },
-	{ .Regs = (UINT32)RK3399_I2C5_BASE, 0 },
-	{ .Regs = (UINT32)RK3399_I2C6_BASE, 0 },
-	{ .Regs = (UINT32)RK3399_I2C7_BASE, 0 }
-};
-
 /* i2c timerout */
 #define I2C_TIMEOUT_US		100000  // 100000us = 100ms
 #define I2C_RETRY_COUNT		3
@@ -130,21 +114,6 @@ static struct RkI2CInfo RkI2CDev[I2C_BUS_MAX] = {
 /* register io */
 #define I2CRegReadl(addr)			MmioRead32(addr)
 #define I2CRegWritel(val, addr)		MmioWrite32(addr, val)
-
-static void *RkI2CGetBase(enum RkI2CBusID BusId)
-{
-	if (BusId >= I2C_BUS_MAX) {
-		DEBUG ((EFI_D_ERROR, "I2C bus error, PLS set i2c bus first!\n"));
-		return (void *)NULL;
-	}
-
-	if (RkI2CDev[BusId].Regs == 0) {
-		DEBUG ((EFI_D_ERROR, "I2C base register error, PLS check i2c config!\n"));
-		return (void *)NULL;	
-	}
-
-	return (void *)&RkI2CDev[BusId];
-}
 
 /* Get pll rate by id */
 #define FRAC_MODE	0
@@ -609,10 +578,18 @@ I2CInit(
   UINT32 speed
 )
 {
+  EFI_STATUS	  Status = EFI_SUCCESS;
+
   DEBUG ((EFI_D_VERBOSE, "I2CInit\n"));
     
   RkI2CInit(BusID, speed);
 
-  return EFI_SUCCESS;
+  Status = RkI2cLibRuntimeSetup(BusID);
+  if(EFI_ERROR (Status)){
+    goto EXIT;
+  }
+
+EXIT:
+  return Status;
 }
 

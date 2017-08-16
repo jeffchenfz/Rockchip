@@ -167,6 +167,8 @@
   HobLib|MdePkg/Library/DxeHobLib/DxeHobLib.inf
   MemoryAllocationLib|MdePkg/Library/UefiMemoryAllocationLib/UefiMemoryAllocationLib.inf
   ReportStatusCodeLib|IntelFrameworkModulePkg/Library/DxeReportStatusCodeLibFramework/DxeReportStatusCodeLib.inf
+  # Add I2CLib
+  I2CLib|OpenPlatformPkg/Platforms/Rockchip/Rk3399Pkg/Library/I2CLib/I2CLibRuntime.inf
 
 [BuildOptions]
 

@@ -14,15 +14,15 @@
 
 [Defines]
   INF_VERSION                    = 0x00010005
-  BASE_NAME                      = I2CLib
+  BASE_NAME                      = I2CLibRuntime
   FILE_GUID                      = a7fefb8f-fa41-4a87-919f-e709b6585672
-  MODULE_TYPE                    = BASE
+  MODULE_TYPE                    = DXE_RUNTIME_DRIVER
   VERSION_STRING                 = 1.0
   LIBRARY_CLASS                  = I2CLib
 
 [Sources.common]
   I2CLib.c
-  I2CLibCommon.c
+  I2CLibRuntime.c
 
 [Packages]
   MdePkg/MdePkg.dec
@@ -38,6 +38,8 @@
   BaseLib
   ArmLib
   TimerLib
+  DxeServicesTableLib
+  UefiRuntimeLib
 
 [BuildOptions]
 
