@@ -40,6 +40,9 @@
 #define RK3399_I2C7_BASE                  0xFF160000
 #define RK3399_I2C8_BASE                  0xFF3E0000
 
+#define RK3399_PWM_BASE                  0xFF420000
+
+
 #define CruReadl(offset)		MmioRead32(RK3399_CRU_BASE + offset)
 #define CruWritel(v, offset)		do { MmioWrite32(RK3399_CRU_BASE + offset, v); } while (0)
 

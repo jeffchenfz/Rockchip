@@ -46,6 +46,19 @@ Rk3399InitMemorySize (
   IN VOID
   )
 {
+  /* temporary workaround patch for PWM.
+   *There is no relationship with this function.
+   */
+  {
+    MmioWrite32(RK3399_PWM_BASE + 0x24, 0x000004b7);
+    MmioWrite32(RK3399_PWM_BASE + 0x28, 0x0000027f);
+    MmioWrite32(RK3399_PWM_BASE + 0x2c, 0x00000013);
+
+    MmioWrite32(RK3399_PWM_BASE + 0x34, 0x000004b7);
+    MmioWrite32(RK3399_PWM_BASE + 0x38, 0x0000027f);
+    MmioWrite32(RK3399_PWM_BASE + 0x3c, 0x00000013);
+  }
+
   return 0;
 }
 
