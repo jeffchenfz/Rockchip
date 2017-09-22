@@ -117,6 +117,11 @@ READ_LOCK_STATUS   = TRUE
   INF MdeModulePkg/Universal/PCD/Dxe/Pcd.inf
 
   #
+  # OemBoardMiscDxe
+  #
+  INF OpenPlatformPkg/Platforms/Rockchip/Rk3399Pkg/Drivers/OemBoardMiscDxe/OemBoardMiscDxe.inf
+
+  #
   # GPIO
   #
   #INF ArmPlatformPkg/Drivers/PL061GpioDxe/PL061GpioDxe.inf

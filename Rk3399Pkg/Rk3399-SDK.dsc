@@ -391,6 +391,11 @@
   MdeModulePkg/Universal/PCD/Dxe/Pcd.inf
 
   #
+  # OemBoardMiscDxe
+  #
+  OpenPlatformPkg/Platforms/Rockchip/Rk3399Pkg/Drivers/OemBoardMiscDxe/OemBoardMiscDxe.inf
+
+  #
   # GPIO
   #
   #ArmPlatformPkg/Drivers/PL061GpioDxe/PL061GpioDxe.inf
