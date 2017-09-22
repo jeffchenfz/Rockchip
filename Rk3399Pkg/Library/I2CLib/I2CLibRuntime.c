@@ -1,7 +1,7 @@
 /** @file
 *
 *  Copyright (c) 2015, Linaro Limited. All rights reserved.
-*  Copyright (c) 2017, Fuzhou Rockchip Electronics Co., Ltd.
+*  Copyright (c) 2017, Rockchip Inc. All rights reserved.
 *
 *  This program and the accompanying materials
 *  are licensed and made available under the terms and conditions of the BSD License
