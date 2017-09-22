@@ -18,6 +18,7 @@
 #include <Uefi.h>
 #include <PiDxe.h>
 #include <Library/BaseLib.h>
+#include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
 #include <Library/UefiLib.h>
 #include <Library/IoLib.h>
@@ -53,9 +54,11 @@
 #define NUM_TIME_REGS	(RK808_WEEKS_REG - RK808_SECONDS_REG + 1)
 #define NUM_ALARM_REGS	(RK808_ALARM_YEARS_REG - RK808_ALARM_SECONDS_REG + 1)
 
-#define RK808_I2C_DEV_ADDR		0x1b
-#define RK808_I2C_SPEED		200000
-#define RK808_I2C_ID			I2C_CH0
+I2C_DEVICE gDSRk808RtcDevice = {
+    .BusID = I2C_CH0,
+    .Speed = 200000,
+    .SlaveDeviceAddress = 0x1b
+};
 
 STATIC BOOLEAN                mRk808Initialized = FALSE;
 
@@ -64,9 +67,18 @@ Rk808I2CInit (
   VOID
   )
 {
-  I2CInit(RK808_I2C_ID, RK808_I2C_SPEED);
-  
-  return EFI_SUCCESS;
+  EFI_STATUS	  Status;
+  I2C_DEVICE	  Dev;
+
+  (VOID) CopyMem(&Dev, &gDSRk808RtcDevice, sizeof(Dev));
+
+  Status = I2CInit(Dev.BusID, Dev.Speed);
+  if (EFI_ERROR (Status)) {
+    goto EXIT;
+  }
+
+EXIT:
+  return Status;
 }
 
 EFI_STATUS
@@ -77,9 +89,18 @@ Rk808I2CRead (
   UINT32 BLen
   )
 {
-	I2CRead(RK808_I2C_ID, RK808_I2C_DEV_ADDR, Reg, RLen, Buf, BLen);
+  EFI_STATUS		Status;
+  I2C_DEVICE		Dev;
 
-	return EFI_SUCCESS;
+  (VOID) CopyMem(&Dev, &gDSRk808RtcDevice, sizeof(Dev));
+
+  Status = I2CRead(Dev.BusID, Dev.SlaveDeviceAddress, Reg, RLen, Buf, BLen);
+  if (EFI_ERROR (Status)) {
+    goto EXIT;
+  }
+
+EXIT:
+  return EFI_SUCCESS;
 }
 
 EFI_STATUS
@@ -90,9 +111,18 @@ Rk808I2CWrite (
   UINT32 BLen
   )
 {
-	I2CWrite(RK808_I2C_ID, RK808_I2C_DEV_ADDR, Reg, RLen, Buf, BLen);
+  EFI_STATUS		  Status;
+  I2C_DEVICE		  Dev;
 
-	return EFI_SUCCESS;
+  (VOID) CopyMem(&Dev, &gDSRk808RtcDevice, sizeof(Dev));
+
+  Status = I2CWrite(Dev.BusID, Dev.SlaveDeviceAddress, Reg, RLen, Buf, BLen);
+  if (EFI_ERROR (Status)) {
+    goto EXIT;
+  }
+
+EXIT:
+  return EFI_SUCCESS;
 }
 
 EFI_STATUS

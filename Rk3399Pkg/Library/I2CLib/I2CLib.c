@@ -531,6 +531,7 @@ I2CWrite (
   UINT32 Len
   )
 {
+  EFI_STATUS		  Status = EFI_SUCCESS;
   struct RkI2CInfo *I2CInfo = (struct RkI2CInfo *)RkI2CGetBase(BusId);
 
   if (I2CInfo == NULL) {
@@ -541,9 +542,13 @@ I2CWrite (
     return -2;
   }
 
-  RkI2CWrite(I2CInfo, Chip, Addr, Alen, Buf, Len);
+  Status = RkI2CWrite(I2CInfo, Chip, Addr, Alen, Buf, Len);
+  if(EFI_ERROR (Status)){
+    goto EXIT;
+  }
 
-  return EFI_SUCCESS;
+EXIT:
+  return Status;
 }
 
 EFI_STATUS
@@ -556,6 +561,7 @@ I2CRead (
   UINT8 *Buf,
   UINT32 Len)
 {
+  EFI_STATUS		Status = EFI_SUCCESS;
   struct RkI2CInfo *I2CInfo = (struct RkI2CInfo *)RkI2CGetBase(BusId);
 
   if (I2CInfo == NULL) {
@@ -566,9 +572,13 @@ I2CRead (
     return EFI_LOAD_ERROR;
   }
 
-  RkI2CRead(I2CInfo, Chip, Addr, Alen, Buf, Len);
+  Status = RkI2CRead(I2CInfo, Chip, Addr, Alen, Buf, Len);
+  if(EFI_ERROR (Status)){
+    goto EXIT;
+  }
 
-  return EFI_SUCCESS;
+EXIT:
+  return Status;
 }
 
 EFI_STATUS
@@ -582,7 +592,10 @@ I2CInit(
 
   DEBUG ((EFI_D_VERBOSE, "I2CInit\n"));
     
-  RkI2CInit(BusID, speed);
+  Status = RkI2CInit(BusID, speed);
+  if(EFI_ERROR (Status)){
+    goto EXIT;
+  }
 
   Status = RkI2cLibRuntimeSetup(BusID);
   if(EFI_ERROR (Status)){

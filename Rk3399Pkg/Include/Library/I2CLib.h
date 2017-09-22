@@ -34,6 +34,12 @@ struct RkI2CInfo {
 	UINT32		Speed;
 };
 
+typedef struct {
+    UINT32           BusID;
+    UINT32           Speed;
+    UINT32           SlaveDeviceAddress;
+}I2C_DEVICE;
+
 EFI_STATUS
 RkI2cLibRuntimeSetup(enum RkI2CBusID BusId);
 
