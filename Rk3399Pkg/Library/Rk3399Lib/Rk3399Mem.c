@@ -21,6 +21,8 @@
 #include <Library/PcdLib.h>
 
 #include <Rk3399/Rk3399.h>
+#include <Rk3399/Rk3399PmuGrf.h>
+#include "Rk3399Mem.h"
 
 // The total number of descriptors, including the final "end-of-table" descriptor.
 #define MAX_VIRTUAL_MEMORY_MAP_DESCRIPTORS 12
@@ -46,7 +48,50 @@ Rk3399InitMemorySize (
   IN VOID
   )
 {
-  return 0;
+  UINT32 Rank, Col, Bank, Cs0Row, Cs1Row, Bw, Row34;
+  UINT32 ChipSizeMb = 0;
+  UINT32 SizeMb = 0;
+  UINT32 Ch;
+  UINT64 ret;
+
+  UINT32 SysReg = MmioRead32(RK3399_PMU_GRF_BASE + PMU_GRF_OS_REG2);
+  UINT32 ChNum = 1 + ((SysReg >> SYS_REG_NUM_CH_SHIFT) &
+                      SYS_REG_NUM_CH_MASK);
+
+  for (Ch = 0; Ch < ChNum; Ch++) {
+    Rank = 1 + (SysReg >> SYS_REG_RANK_SHIFT(Ch) &
+                SYS_REG_RANK_MASK);
+    Col = 9 + (SysReg >> SYS_REG_COL_SHIFT(Ch) & SYS_REG_COL_MASK);
+    Bank = 3 - ((SysReg >> SYS_REG_BK_SHIFT(Ch)) & SYS_REG_BK_MASK);
+    Cs0Row = 13 + (SysReg >> SYS_REG_CS0_ROW_SHIFT(Ch) &
+                   SYS_REG_CS0_ROW_MASK);
+    Cs1Row = 13 + (SysReg >> SYS_REG_CS1_ROW_SHIFT(Ch) &
+                   SYS_REG_CS1_ROW_MASK);
+    Bw = (2 >> ((SysReg >> SYS_REG_BW_SHIFT(Ch)) &
+                SYS_REG_BW_MASK));
+    Row34 = SysReg >> SYS_REG_ROW_3_4_SHIFT(Ch) &
+            SYS_REG_ROW_3_4_MASK;
+
+    ChipSizeMb = (1 << (Cs0Row + Col + Bank + Bw - 20));
+
+    if (Rank > 1)
+      ChipSizeMb += ChipSizeMb >> (Cs0Row - Cs1Row);
+    if (Row34)
+      ChipSizeMb = ChipSizeMb * 3 / 4;
+    SizeMb += ChipSizeMb;
+    DEBUG((DEBUG_INFO, "Rank %d Col %d Bank %d Cs0Row %d Bw %d Row34 %d\n",
+          Rank, Col, Bank, Cs0Row, Bw, Row34));
+  }
+
+  /* support maximum DDR capacity is 2GB size */
+  if (SizeMb > 2048)
+    SizeMb = 2048;
+
+  ret = SizeMb << 20;
+
+  DEBUG((DEBUG_INFO, "memory size=%dMB 0x%x\n", SizeMb, ret));
+
+  return ret;
 }
 
 /**
@@ -163,7 +208,7 @@ ArmPlatformGetVirtualMemoryMap (
 
   Index = 0;
 
-  // Hi6220 SOC peripherals
+  // RK3399 SOC peripherals
   VirtualMemoryTable[Index].PhysicalBase    = RK3399_PERIPH_BASE;
   VirtualMemoryTable[Index].VirtualBase     = RK3399_PERIPH_BASE;
   VirtualMemoryTable[Index].Length          = RK3399_PERIPH_SZ;
