@@ -29,7 +29,7 @@
   MdePkg/MdePkg.dec
   EmbeddedPkg/EmbeddedPkg.dec
   ArmPlatformPkg/ArmPlatformPkg.dec
-  OpenPlatformPkg/Platforms/Rockchip/Rk3399Pkg/Rk3399Pkg.dec
+  Platform/Rockchip/Rk3399Pkg/Rk3399Pkg.dec
 
 [LibraryClasses]
   IoLib

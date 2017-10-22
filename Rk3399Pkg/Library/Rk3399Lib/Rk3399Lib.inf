@@ -25,7 +25,7 @@
   EmbeddedPkg/EmbeddedPkg.dec
   MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
-  OpenPlatformPkg/Platforms/Rockchip/Rk3399Pkg/Rk3399Pkg.dec
+  Platform/Rockchip/Rk3399Pkg/Rk3399Pkg.dec
 
 [LibraryClasses]
   ArmLib

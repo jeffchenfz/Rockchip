@@ -93,7 +93,7 @@ READ_LOCK_STATUS   = TRUE
   # PI DXE Drivers producing Architectural Protocols (EFI Services)
   #
   #INF ArmPkg/Drivers/CpuDxe/CpuDxe.inf
-  INF OpenPlatformPkg/Platforms/Rockchip/Rk3399Pkg/Drivers/CpuDxe/CpuDxe.inf
+  INF Platform/Rockchip/Rk3399Pkg/Drivers/CpuDxe/CpuDxe.inf
   INF MdeModulePkg/Core/RuntimeDxe/RuntimeDxe.inf
   INF MdeModulePkg/Universal/SecurityStubDxe/SecurityStubDxe.inf
   INF MdeModulePkg/Universal/CapsuleRuntimeDxe/CapsuleRuntimeDxe.inf
@@ -119,7 +119,7 @@ READ_LOCK_STATUS   = TRUE
   #
   # OemBoardMiscDxe
   #
-  INF OpenPlatformPkg/Platforms/Rockchip/Rk3399Pkg/Drivers/OemBoardMiscDxe/OemBoardMiscDxe.inf
+  INF Platform/Rockchip/Rk3399Pkg/Drivers/OemBoardMiscDxe/OemBoardMiscDxe.inf
 
   #
   # GPIO
@@ -129,8 +129,8 @@ READ_LOCK_STATUS   = TRUE
   #
   # Multimedia Card Interface
   #
-  INF EmbeddedPkg/Universal/MmcDxe/MmcDxe.inf
-  INF OpenPlatformPkg/Platforms/Rockchip/Rk3399Pkg/Drivers/DwEmmcDxe/DwEmmcDxe.inf
+  INF Platform/Rockchip/Rk3399Pkg/Drivers/MmcDxe/MmcDxe.inf
+  INF Platform/Rockchip/Rk3399Pkg/Drivers/DwEmmcDxe/DwEmmcDxe.inf
 
   #
   # USB Host Support

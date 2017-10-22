@@ -25,7 +25,7 @@
   SUPPORTED_ARCHITECTURES        = AARCH64
   BUILD_TARGETS                  = DEBUG|RELEASE
   SKUID_IDENTIFIER               = DEFAULT
-  FLASH_DEFINITION               = OpenPlatformPkg/Platforms/Rockchip/Rk3399Pkg/Rk3399-SDK.fdf
+  FLASH_DEFINITION               = Platform/Rockchip/Rk3399Pkg/Rk3399-SDK.fdf
 
 [LibraryClasses.common]
 !if $(TARGET) == RELEASE
@@ -44,13 +44,14 @@
 
   ArmLib|ArmPkg/Library/ArmLib/ArmBaseLib.inf
   ArmMmuLib|ArmPkg/Library/ArmMmuLib/ArmMmuBaseLib.inf
-  ArmPlatformLib|OpenPlatformPkg/Platforms/Rockchip/Rk3399Pkg/Library/Rk3399Lib/Rk3399Lib.inf
+  ArmPlatformLib|Platform/Rockchip/Rk3399Pkg/Library/Rk3399Lib/Rk3399Lib.inf
   ArmPlatformStackLib|ArmPlatformPkg/Library/ArmPlatformStackLib/ArmPlatformStackLib.inf
   ArmPlatformSysConfigLib|ArmPlatformPkg/Library/ArmPlatformSysConfigLibNull/ArmPlatformSysConfigLibNull.inf
 
   BaseLib|MdePkg/Library/BaseLib/BaseLib.inf
   BaseMemoryLib|MdePkg/Library/BaseMemoryLib/BaseMemoryLib.inf
   CacheMaintenanceLib|ArmPkg/Library/ArmCacheMaintenanceLib/ArmCacheMaintenanceLib.inf
+  CapsuleLib|MdeModulePkg/Library/DxeCapsuleLibNull/DxeCapsuleLibNull.inf
   DefaultExceptionHandlerLib|ArmPkg/Library/DefaultExceptionHandlerLib/DefaultExceptionHandlerLib.inf
   CpuExceptionHandlerLib|ArmPkg/Library/ArmExceptionLib/ArmExceptionLib.inf
   CpuLib|MdePkg/Library/BaseCpuLib/BaseCpuLib.inf
@@ -85,9 +86,9 @@
   UefiDriverEntryPoint|MdePkg/Library/UefiDriverEntryPoint/UefiDriverEntryPoint.inf
   UefiApplicationEntryPoint|MdePkg/Library/UefiApplicationEntryPoint/UefiApplicationEntryPoint.inf
 
-  UartLib|OpenPlatformPkg/Platforms/Rockchip/Rk3399Pkg/Library/SerialPortLib/UartLib.inf
-  SerialPortLib|OpenPlatformPkg/Platforms/Rockchip/Rk3399Pkg/Library/SerialPortLib/SerialPortLib.inf
-  RealTimeClockLib|OpenPlatformPkg/Platforms/Rockchip/Rk3399Pkg/Library/Rk808RealTimeClockLib/Rk808RealTimeClockLib.inf
+  UartLib|Platform/Rockchip/Rk3399Pkg/Library/SerialPortLib/UartLib.inf
+  SerialPortLib|Platform/Rockchip/Rk3399Pkg/Library/SerialPortLib/SerialPortLib.inf
+  RealTimeClockLib|Platform/Rockchip/Rk3399Pkg/Library/Rk808RealTimeClockLib/Rk808RealTimeClockLib.inf
   
   NetLib|MdeModulePkg/Library/DxeNetLib/DxeNetLib.inf
 
@@ -107,10 +108,10 @@
   UefiRuntimeServicesTableLib|MdePkg/Library/UefiRuntimeServicesTableLib/UefiRuntimeServicesTableLib.inf
 
   # USB Requirements
-  UefiUsbLib|MdePkg/Library/UefiUsbLib/UefiUsbLib.inf
-  DmaLib|ArmPkg/Library/ArmDmaLib/ArmDmaLib.inf
+  #UefiUsbLib|MdePkg/Library/UefiUsbLib/UefiUsbLib.inf
+  #DmaLib|ArmPkg/Library/ArmDmaLib/ArmDmaLib.inf
 
-  UncachedMemoryAllocationLib|ArmPkg/Library/UncachedMemoryAllocationLib/UncachedMemoryAllocationLib.inf
+  #UncachedMemoryAllocationLib|ArmPkg/Library/UncachedMemoryAllocationLib/UncachedMemoryAllocationLib.inf
 
   # Network Libraries
   UefiScsiLib|MdePkg/Library/UefiScsiLib/UefiScsiLib.inf
@@ -130,7 +131,7 @@
   TimeBaseLib|EmbeddedPkg/Library/TimeBaseLib/TimeBaseLib.inf
 
   # Add I2CLib
-  I2CLib|OpenPlatformPkg/Platforms/Rockchip/Rk3399Pkg/Library/I2CLib/I2CLib.inf
+  I2CLib|Platform/Rockchip/Rk3399Pkg/Library/I2CLib/I2CLib.inf
 
 [LibraryClasses.common.SEC]
   PrePiLib|EmbeddedPkg/Library/PrePiLib/PrePiLib.inf
@@ -163,12 +164,12 @@
   SecurityManagementLib|MdeModulePkg/Library/DxeSecurityManagementLib/DxeSecurityManagementLib.inf
 
 [LibraryClasses.common.DXE_RUNTIME_DRIVER]
-  CapsuleLib|MdeModulePkg/Library/DxeCapsuleLibNull/DxeCapsuleLibNull.inf
+  #CapsuleLib|MdeModulePkg/Library/DxeCapsuleLibNull/DxeCapsuleLibNull.inf
   HobLib|MdePkg/Library/DxeHobLib/DxeHobLib.inf
   MemoryAllocationLib|MdePkg/Library/UefiMemoryAllocationLib/UefiMemoryAllocationLib.inf
   ReportStatusCodeLib|IntelFrameworkModulePkg/Library/DxeReportStatusCodeLibFramework/DxeReportStatusCodeLib.inf
   # Add I2CLib
-  I2CLib|OpenPlatformPkg/Platforms/Rockchip/Rk3399Pkg/Library/I2CLib/I2CLibRuntime.inf
+  I2CLib|Platform/Rockchip/Rk3399Pkg/Library/I2CLib/I2CLibRuntime.inf
 
 [BuildOptions]
 
@@ -366,7 +367,7 @@
   # Architectural Protocols
   #
   #ArmPkg/Drivers/CpuDxe/CpuDxe.inf
-  OpenPlatformPkg/Platforms/Rockchip/Rk3399Pkg/Drivers/CpuDxe/CpuDxe.inf
+  Platform/Rockchip/Rk3399Pkg/Drivers/CpuDxe/CpuDxe.inf
   MdeModulePkg/Core/RuntimeDxe/RuntimeDxe.inf
   MdeModulePkg/Universal/SecurityStubDxe/SecurityStubDxe.inf
   MdeModulePkg/Universal/CapsuleRuntimeDxe/CapsuleRuntimeDxe.inf
@@ -393,7 +394,7 @@
   #
   # OemBoardMiscDxe
   #
-  OpenPlatformPkg/Platforms/Rockchip/Rk3399Pkg/Drivers/OemBoardMiscDxe/OemBoardMiscDxe.inf
+  Platform/Rockchip/Rk3399Pkg/Drivers/OemBoardMiscDxe/OemBoardMiscDxe.inf
 
   #
   # GPIO
@@ -403,8 +404,8 @@
   #
   # MMC/SD
   #
-  EmbeddedPkg/Universal/MmcDxe/MmcDxe.inf
-  OpenPlatformPkg/Platforms/Rockchip/Rk3399Pkg/Drivers/DwEmmcDxe/DwEmmcDxe.inf
+  Platform/Rockchip/Rk3399Pkg/Drivers/MmcDxe/MmcDxe.inf
+  Platform/Rockchip/Rk3399Pkg/Drivers/DwEmmcDxe/DwEmmcDxe.inf
 
   #
   # USB Host Support
